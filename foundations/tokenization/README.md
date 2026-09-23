@@ -24,4 +24,6 @@ For each tokenizer and phrase, I print the token count and render it as an HTML 
 
 ![Tokenization comparison across tokenizer vocabularies](tokenization_comparison.svg)
 
-The comparison makes it possible to inspect how vocabulary size and tokenizer generation affect biomedical text efficiency. Gene symbols and mutation notation may be represented as several subword tokens rather than as single semantic units, and small changes in punctuation or formatting can change the resulting tokenization. Token counts from this notebook can be used as a quick diagnostic when estimating context usage for biomedical prompts or datasets.
+In this sample, the newer encodings are modestly more token-efficient: `gpt2` uses 82 tokens across the five rendered phrases, while both `cl100k_base` and `o200k_base` use 75, an approximately 8.5% reduction. The improvement is not universal: some phrases have the same count across all three encodings. Here, efficiency means representing the same text with fewer tokens, which can reduce context-window usage and the compute or cost associated with processing a prompt. It does not by itself imply better biomedical understanding.
+
+Gene symbols and mutation notation may still be represented as several subword tokens rather than as single semantic units, and small changes in punctuation or formatting can change the resulting tokenization. This makes token counts useful when estimating context usage for biomedical datasets.
