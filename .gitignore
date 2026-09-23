@@ -1,0 +1,35 @@
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+.env
+.env.*
+
+# Model weights and large artifacts
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.gguf
+*.bin
+models/
+checkpoints/
+outputs/
+
+# Datasets and experiment logs
+data/
+wandb/
+mlruns/
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
