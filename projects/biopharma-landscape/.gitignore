@@ -1,0 +1,49 @@
+# Local runtime state and private research material
+/data/
+/storage/
+/artifacts/
+/reports/generated/
+/indexes/
+/chroma/
+/qdrant_storage/
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+
+# Logs, traces, temporary outputs
+/logs/
+/traces/
+/tmp/
+/.cache/
+*.log
+
+# Secrets and per-machine configurations
+.env
+.env.*
+!.env.example
+config/local.*
+!config/local.example.*
+
+# Python, notebooks, and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Model weights and download caches
+/models/
+/checkpoints/
+*.safetensors
+*.gguf
+*.pt
+*.pth
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
