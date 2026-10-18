@@ -3,7 +3,7 @@ from pathlib import Path
 from biopharma.models import Paper
 from biopharma.storage.database import (
     get_papers,
-    initialize,
+    initialize_db,
     save_papers,
 )
 
@@ -11,7 +11,7 @@ from biopharma.storage.database import (
 def test_paper_persistence_and_deduplication(tmp_path: Path) -> None:
     db_path = tmp_path / "test.db"
 
-    initialize(db_path)
+    initialize_db(db_path)
 
     paper = Paper(
         id="https://openalex.org/W123",
@@ -35,6 +35,6 @@ def test_paper_persistence_and_deduplication(tmp_path: Path) -> None:
 def test_empty_database(tmp_path: Path) -> None:
     db_path = tmp_path / "empty.db"
 
-    initialize(db_path)
+    initialize_db(db_path)
 
     assert get_papers(db_path) == []

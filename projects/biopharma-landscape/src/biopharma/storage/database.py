@@ -45,7 +45,7 @@ def save_papers(
 ) -> int:
     """Insert new papers; ignore previously ingested papers."""
     # TODO: Can update papers if they have changed since last ingestion, but for now we just ignore them.
-    with connect_db() as conn:
+    with connect_db(db_path) as conn:
         before = conn.total_changes
 
         for paper in papers:
@@ -73,7 +73,7 @@ def get_papers(
     db_path: Path = DEFAULT_DB_PATH,
 ) -> list[dict[str, Any]]:
     """Return all papers in the database."""
-    with connect_db() as conn:
+    with connect_db(db_path) as conn:
         conn.row_factory = sqlite3.Row
         rows = conn.execute(
             "SELECT * FROM papers ORDER BY publication_date DESC"

@@ -4,7 +4,13 @@ import pandas as pd
 import streamlit as st
 
 from biopharma.ingestion.openalex import search_papers
-from biopharma.storage.database import get_papers, save_papers
+from biopharma.storage.database import (
+    get_papers,
+    initialize_db,
+    save_papers,
+)
+
+initialize_db()
 
 st.set_page_config(page_title="Biopharma AI Observatory", layout="wide")
 st.caption("Scientific research • Emerging AI • Biopharma")
