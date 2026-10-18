@@ -16,6 +16,12 @@ Build **both**, rather than optimising for only one:
 
 **Workflow instruction:** The user writes/runs code locally with interactive guidance. **Do not push, commit, or otherwise modify GitHub repositories or blog content unless the user later explicitly requests this.** Do not make blog updates during the build by default.
 
+**Software Engineering Excellence** All code must meet high production engineering standards. Every milestone should include consistent automated formatting and linting, appropriate type annotations, modular design, meaningful unit and integration tests, robust error handling, secure configuration, and reproducible development workflows.
+
+Use Ruff for formatting and linting, pytest for tests, and introduce static type checking, pre-commit hooks and CI as the project matures.
+
+Features are not complete merely because they execute successfully. Engineering quality must be validated alongside functional correctness. Code quality improvements must be applied incrementally rather than postponed until the end.
+
 ## 2. Public product requirements
 
 The site should ultimately have these **six visible capabilities**:
