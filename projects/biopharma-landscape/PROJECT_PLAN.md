@@ -1,7 +1,7 @@
 # Biopharma AI Observatory — Project Plan & Working Contract
 
 **Project path:** `ai-scientist-lab/projects/biopharma-landscape/`  
-**Status:** Planned; implementation begins with Milestone 1  
+**Status:** Milestone 1 in progress; initial OpenAlex → SQLite → Streamlit flow implemented locally and reported working  
 **Plan established:** 2026-10-17  
 **Purpose of this file:** Persistent source of truth for subsequent coding sessions. Read it before proposing architectural changes, implementing new components, or altering the milestone sequence.
 
@@ -60,6 +60,18 @@ Start narrow and expand through the pipeline. Track large pharma including Pfize
 Additional necessary foundations: structured extraction and schema validation, secure secrets management, local data storage, retrieval evaluation, human-in-the-loop review, and reproducible environment setup.
 
 **Coverage constraint:** Do not quietly drop a topic for speed. It may be implemented minimally first and expanded later, but must have a working demonstration before the project is called complete.
+
+## 3A. Software engineering excellence — non-negotiable
+
+Code quality is a project outcome, not a final cleanup task. For every increment:
+
+- Run Ruff formatting and linting; keep imports and code style consistent.
+- Use precise type annotations and mypy checks on the backend, with clear interfaces and responsibilities.
+- Write isolated unit and integration tests, including negative paths and failure scenarios; never treat an unrun test as passing.
+- Manage database connections, transactions, configuration, logging, API failures and secrets correctly.
+- Prefer small, maintainable modules and explicit abstractions over premature complexity.
+- Document reproducible run/test commands; verify clean-install and restart behaviour.
+- Before calling a feature complete, run `ruff format --check .`, `ruff check .`, `mypy src/biopharma` and `python -m pytest -v`, plus the app smoke test. Record results in `PROGRESS.md`.
 
 ## 4. Recommended technical stack (starting defaults, not dogma)
 
@@ -181,6 +193,32 @@ Time windows below assume approximately 1–2 hours a day and are **planning est
 10. **Showcase quality matters:** Every major step should support a demonstrable user experience; do not build only invisible infrastructure.
 11. **Controlled changes:** When suggesting a scope or architecture change, label it **proposed deviation**, articulate benefits/costs, and seek user agreement before revising this working contract.
 12. **Session continuity:** At the start of future project sessions, read `PROJECT_PLAN.md` and any `PROGRESS.md` before deciding what to implement next. If the file isn't available in conversation context, ask for the current copy rather than assuming it can be accessed automatically.
+
+## 8A. Implementation checkpoint — 2026-10-17
+
+**Reported working (user-confirmed locally):**
+- Project scaffold and editable Python packaging were started.
+- OpenAlex client fetches and normalizes publication metadata to a typed `Paper` record.
+- SQLite persistence and ID-based duplicate suppression are implemented.
+- Streamlit Paper Radar was exercised successfully, and the work was checked in to GitHub.
+- Ruff / VS Code formatting was configured; `mypy` and `pytest` dependencies and test files were added.
+
+**Verification status:** These are implementation / user reports, not a completed M1 gate. The reviewed GitHub files reveal corrections required before quality checks can be treated as passing. Test commands have **not** been independently executed; do not assume they pass.
+
+**Code-review corrections to make before moving forward:**
+1. In `src/biopharma/storage/database.py`, `save_papers()` and `get_papers()` must call `connect_db(db_path)`, not `connect_db()`, to respect test and deployment database isolation.
+2. In `tests/test_database.py`, import and use `initialize_db()` (the actual function), instead of `initialize()`.
+3. In `pyproject.toml`, fix the build metadata to use `[build-system]` and `build-backend = "setuptools.build_meta"`. The checked-in file currently has `build_backend` as an incorrect top-level key.
+4. In `apps/web/app.py`, call `initialize_db()` during initial setup, so a clean installation can open the app with no pre-existing database.
+5. Re-run the entire app and check `ruff format --check .`, `ruff check .`, `mypy src/biopharma`, `python -m pytest -v`. Fix any newly surfaced problems before closing the checkpoint.
+
+**Next session:**
+- First resolve the four code-review issues above and record actual test output in `PROGRESS.md`.
+- Then resume M1 with the company registry and minimal FastAPI endpoint as planned, or explicitly document any agreed sequencing change.
+- After the M1 acceptance gate, start the durable stateful research-execution harness: task lifecycle, atomic claiming, retries, checkpoints, idempotency and crash recovery. These are the foundations for living paper, company and startup agents.
+- No public website/blog changes are required yet. Future enterprise use remains separate from the public project.
+
+**Milestone state:** M1 **in progress**, not complete. No requirements or engineering learning topics have been removed.
 
 ## 9. Progress log format (maintain in `PROGRESS.md` once coding starts)
 
