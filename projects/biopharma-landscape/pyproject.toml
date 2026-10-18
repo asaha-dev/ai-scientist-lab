@@ -1,0 +1,45 @@
+requires = ["setuptools>=68"]
+build_backend = "setuptools.build_meta"
+
+[project]
+name = "biopharma-landscape"
+version = "0.1.0"
+description = "A living AI backed state of affairs for biopharma"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27,<1",
+    "streamlit>=1.40,<2",
+    "pandas>=2.2,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<10"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[tool.ruff]
+target-version = "py311"
+line-length = 80
+
+[tool.ruff.lint]
+select = [
+    "E4",    # Import/style errors
+    "E7",    # Statement errors
+    "E9",    # Syntax errors
+    "F",     # Pyflakes
+    "I",     # Import ordering
+    "B",     # Common coding bugs
+    "UP",    # Modern Python syntax
+    "SIM",   # Simplification suggestions
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

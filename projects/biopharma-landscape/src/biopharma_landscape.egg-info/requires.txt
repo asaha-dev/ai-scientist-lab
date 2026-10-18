@@ -1,0 +1,6 @@
+httpx<1,>=0.27
+streamlit<2,>=1.40
+pandas<3,>=2.2
+
+[dev]
+pytest<10,>=8
