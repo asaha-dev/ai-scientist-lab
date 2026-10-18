@@ -14,7 +14,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8,<10"
+    "pytest>=8,<10",
+    "ruff>=0.14",
+    "mypy>=1.15",
 ]
 
 [tool.setuptools.packages.find]
@@ -43,3 +45,8 @@ indent-style = "space"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src/biopharma"]

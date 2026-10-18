@@ -1,24 +1,59 @@
+"""Retrieve and normalize publication metadata from OpenAlex."""
+
 import os
+from typing import Any
 
 import httpx
 
-OPENALEX_API_URL = "https://api.openalex.org/works"
+from biopharma.models import Paper
+
+OPENALEX_URL = "https://api.openalex.org/works"
+
+
+def normalize_paper(record: dict[str, Any]) -> Paper:
+    """Convert an OpenAlex work into our internal paper schema."""
+
+    paper_id = record["id"]
+
+    authors = [
+        authorship["author"]["display_name"]
+        for authorship in record.get("authorships", [])
+        if authorship.get("author", {}).get("display_name")
+    ]
+
+    primary_location = record.get("primary_location") or {}
+
+    url = (
+        record.get("doi")
+        or primary_location.get("landing_page_url")
+        or paper_id
+    )
+
+    return Paper(
+        id=paper_id,
+        title=record.get("display_name") or "",
+        doi=record.get("doi"),
+        publication_date=record.get("publication_date"),
+        authors=authors,
+        url=url,
+        source="openalex",
+    )
 
 
 def search_papers(
     query: str,
     limit: int = 20,
-) -> list[dict]:
-    """
-    Search for papers using the OpenAlex API.
+    *,
+    client: httpx.Client | None = None,
+) -> list[Paper]:
+    """Search OpenAlex and return normalized publication metadata."""
 
-    Args:
-        query (str): The search query.
-        limit (int): The maximum number of results to return.
+    if not query.strip():
+        raise ValueError("Search query cannot be empty")
 
-    Returns:
-        list[dict]: A list of papers matching the search query.
-    """
+    if not 1 <= limit <= 200:
+        raise ValueError("Limit must be between 1 and 200")
+
     params = {
         "search": query,
         "per_page": limit,
@@ -29,35 +64,21 @@ def search_papers(
     if api_key:
         params["api_key"] = api_key
 
-    with httpx.Client(timeout=30.0) as client:
-        response = client.get(OPENALEX_API_URL, params=params)
+    def fetch(active_client: httpx.Client) -> list[Paper]:
+        response = active_client.get(OPENALEX_URL, params=params)
         response.raise_for_status()
+
         results = response.json()["results"]
-        return [normalize_paper(paper) for paper in results]
 
+        if not isinstance(results, list):
+            raise ValueError(
+                "Unexpected OpenAlex response: results is not a list"
+            )
 
-def normalize_paper(paper: dict) -> dict:
-    """
-    Convert OpenAlex records to our internal schema."""
+        return [normalize_paper(record) for record in results]
 
-    authors = [
-        item["author"]["display_name"]
-        for item in paper.get("authorships", [])
-        if item.get("author")
-    ]
+    if client is not None:
+        return fetch(client)
 
-    return {
-        "id": paper.get("id"),
-        "title": paper.get("title"),
-        "doi": paper.get("doi"),
-        "publication_date": paper.get("publication_date"),
-        "authors": authors,
-        "url": (
-            paper.get("doi")
-            or paper.get("primary_location", {}).get("landing_page_url")
-            if paper.get("primary_location") is not None
-            else paper.get("doi")
-        )
-        or paper["id"],
-        "source": "openalex",
-    }
+    with httpx.Client(timeout=30.0) as new_client:
+        return fetch(new_client)

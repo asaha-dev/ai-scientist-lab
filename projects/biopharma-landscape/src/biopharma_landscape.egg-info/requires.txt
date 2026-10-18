@@ -4,3 +4,5 @@ pandas<3,>=2.2
 
 [dev]
 pytest<10,>=8
+ruff>=0.14
+mypy>=1.15
